@@ -1,17 +1,18 @@
 This is a Python script with the goal of periodically synchronizing two directories in
 one direction only: from the source directory to the destination (replica) directory.
 
-The main goal is have an exact replica of the source directory in the destination directory.
+The main goal is having an exact replica of the source directory in the destination directory.
 Additinaly, the script attempts to minimize delete and copy operations for already synced
 and unchanged files, i.e. if a file content from source matches a file in the replica folder,
 this would be handled in one of a few ways:
-* Nothing is done, if the destination file path, relative to the main destination directry,
+* No action required, if the destination file path, relative to the main destination directry,
   matches the source file path, relative to the main source directory;
 * If those paths are not matching, the file in the destination would be moved, so that
   it matches the relative path of the source file;
-Any naming conflicts related to that are resolved, if possible:
-* Ideally, paths in destination, which are needed for source file/dir syncing are renamed;
-* If this is not possible, the source file/directory is still synced, but the name
+* Any naming conflicts related to that are resolved, if possible:
+  * Ideally, paths in destination, which are needed for source file/dir syncing, but are
+    taken by other files/dirs in destination, are renamed;
+  * If this is not possible, the source file/directory is still synced, but the name
   in destination is changed (currently by appending a time stamp to that path)
 
 LIMITATIONS:
@@ -21,18 +22,19 @@ LIMITATIONS:
 * No attempt is made to resolve/synchronize links, those are currently ignored;
 * On renaming of files/directories, in order to resolve name collisions, no validation
   is done for the length of the new path;
+* So far only tested on Windows 10 with Python 3.11.7
 
 The script follows these steps:
 1. Validates user input.
 3. Marks the start of synchronization.
 4. Takes a snapshot of the source dir; as this is being done,
     adapts the destination directry structure as a prep for syncing.
-    NOTE: If for some reason, a src sub-dir cannot be synced into the
+    * NOTE: If for some reason, a src sub-dir cannot be synced into the
     respective dest location, sync will be attempted under a different
     name in dest, i.e.:
     ./src/subDir1 cannot be synced under ./dest/subDir1
-    resolution: if possible, synced under /dest/subDir1_<timestamp>
-    NOTE: the same applies for file name conflicts
+    resolution: if possible, synced under /dest/subDir1_\<timestamp>
+    * NOTE: the same applies for file name conflicts
 5. Takes a snapshot of the dest dir (in its modified adapted state,
     see previous point)
 6. Does the actual syncing by:
