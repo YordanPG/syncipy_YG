@@ -214,7 +214,6 @@ def main():
                 except Exception as e:
                     logger.error(f"  File cannot be removed: '{fAbsP}'",
                                  exc_info=True)
-        del existingDestFiles
                 
         logger.info("Removing obsolete destination directories")
         # dirs must be empty, so sort in such way, as to start from the
@@ -241,7 +240,11 @@ def main():
                 existingDestDirs.remove(d)
             except Exception as e:
                 logger.error(f"Dir cannot be removed: '{d}' ", exc_info=True)
-                
+
+        #clear snapshot variables before ending the cycle
+        del srcSnap
+        del existingDestFiles
+        del existingDestDirs
         logger.info("Sync cycle finished")
         waitingTime = endSyncCycle(currentCycleStart, syncPeriod)
         msg = f"Next sync cycle starts in {waitingTime} seconds\n\n\n"
